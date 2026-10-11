@@ -213,7 +213,7 @@ footer a{color:var(--gold2)}
 <div class="tabs"><button id="tin" class="on" onclick="setMode('in')">Sign in</button><button id="tup" onclick="setMode('up')">Register</button></div>
 <input id="fn" placeholder="Full name" autocomplete="name"><input id="fp" placeholder="Phone number" type="tel" autocomplete="tel"><input id="fe" placeholder="Email" type="email" autocomplete="email"><input id="fw" placeholder="Password (min 6 characters)" type="password" autocomplete="current-password">
 <div class="err" id="er"></div><button class="btn g" style="width:100%;margin-top:10px" onclick="submitAuth()">Continue</button>
-<p style="font-size:.75rem;color:var(--mute);margin-top:12px">Sign in to add items and check out. Your account and saved cart stay on this device and browser.</p></div></div>
+<p style="font-size:.75rem;color:var(--mute);margin-top:12px">Sign in to add items and check out. Your account and saved cart are kept securely online, so they follow you to any device. <a href="#" onclick="forgot();return false" style="color:var(--ink)">Forgot password?</a></p></div></div>
 <div class="ov dr" id="cart"><div class="md"><button class="x" onclick="closeAll()" aria-label="Close">&times;</button><span class="eyebrow">Your cart</span><h3>Shopping bag</h3><div id="ci"></div>
 <div class="tot"><span>Total</span><span id="tt">&#8358;0</span></div><textarea id="addr" rows="3" placeholder="Delivery address (street, city, state)"></textarea>
 <button class="btn g" style="width:100%;margin-top:14px" onclick="checkout()">Checkout on WhatsApp</button>
@@ -258,49 +258,63 @@ function observe(){document.querySelectorAll(".rv:not(.on)").forEach(e=>io.obser
 const co=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;co.unobserve(e.target);const t=+e.target.dataset.n;let v=0;const k=setInterval(()=>{v+=Math.ceil(t/40);if(v>=t){v=t;clearInterval(k)}e.target.textContent=v},35)}));
 document.querySelectorAll("[data-n]").forEach(e=>co.observe(e));
 
-// ===== accounts & saved cart (stored in this browser) =====
-const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
-let users=LS("nb_users")||{},me=LS("nb_session"),pending=null,mode="in";
-if(!users[me])me=null;
-const save=()=>LS("nb_users",users);
-async function hash(p,s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s+":"+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(s+":"+p)}}
-const total=()=>users[me]?users[me].cart.reduce((a,c)=>a+(c.price||0)*c.qty,0):0;
-function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2200)}
-function ui(){const u=users[me];$("acctbtn").textContent=u?"Hi, "+u.name.split(" ")[0]:"Sign in";$("cc").textContent=u?u.cart.reduce((a,c)=>a+c.qty,0):0}
-function closeAll(){["auth","cart"].forEach(i=>$(i).classList.remove("open"))}
-["auth","cart"].forEach(i=>$(i).addEventListener("click",e=>{if(e.target.id===i)closeAll()}));
-function setMode(m){mode=m;$("tin").classList.toggle("on",m==="in");$("tup").classList.toggle("on",m==="up");$("fn").style.display=$("fp").style.display=m==="up"?"block":"none";$("at").textContent=m==="up"?"Create your account":"Welcome back";$("er").textContent=""}
-function openAuth(){if(me){if(confirm("Sign out of "+users[me].name+"? Your cart stays saved for next time.")){me=null;LS("nb_session",null);ui()}return}setMode("in");$("auth").classList.add("open")}
-async function submitAuth(){const email=$("fe").value.trim().toLowerCase(),pw=$("fw").value,er=$("er");
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,addDoc,collection,onSnapshot,query,orderBy,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyBHB_DcYl0vAdHJdc1JrD756YAch4UTuWc",authDomain:"nafsybabs.firebaseapp.com",projectId:"nafsybabs",storageBucket:"nafsybabs.firebasestorage.app",messagingSenderId:"734849162698",appId:"1:734849162698:web:9368d82747243320d80333"});
+const auth=getAuth(app),db=getFirestore(app);
+let me=null,prof=null,pending=null,mode="in",busy=false;
+const total=()=>prof?prof.cart.reduce((a,c)=>a+(c.price||0)*c.qty,0):0;
+const cnt=()=>prof?prof.cart.reduce((a,c)=>a+c.qty,0):0;
+const blank=u=>({name:"Customer",phone:"",email:u.email,cart:[],addr:""});
+const saveProf=()=>setDoc(doc(db,"users",me.uid),prof,{merge:true}).catch(()=>toast("Could not save your cart. Check your connection."));
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),2400)}
+function ui(){$("acctbtn").textContent=me&&prof?"Hi, "+prof.name.split(" ")[0]:"Sign in";$("cc").textContent=cnt()}
+const msg=c=>({"auth/email-already-in-use":"This email is already registered. Please sign in.","auth/invalid-credential":"Incorrect email or password.","auth/wrong-password":"Incorrect email or password.","auth/user-not-found":"No account found for this email.","auth/weak-password":"Password must be at least 6 characters.","auth/invalid-email":"Enter a valid email address.","auth/network-request-failed":"No connection. Please try again.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/operation-not-allowed":"Email sign-in is not switched on in Firebase yet.","auth/unauthorized-domain":"This website address is not yet allowed in Firebase.","auth/api-key-not-valid.-please-pass-a-valid-api-key.":"The Firebase key in the site is wrong."}[c]||"Something went wrong ("+(c||"error")+").");
+onAuthStateChanged(auth,async u=>{if(busy)return;me=u;prof=null;
+ if(u){try{const s=await getDoc(doc(db,"users",u.uid));prof=s.exists()?s.data():blank(u)}catch(e){prof=blank(u)}prof.cart=prof.cart||[]}
+ ui();if(u&&pending!==null){const i=pending;pending=null;window.addCart(i)}});
+window.closeAll=()=>["auth","cart"].forEach(i=>$(i).classList.remove("open"));
+["auth","cart"].forEach(i=>$(i).addEventListener("click",e=>{if(e.target.id===i)window.closeAll()}));
+window.setMode=m=>{mode=m;$("tin").classList.toggle("on",m==="in");$("tup").classList.toggle("on",m==="up");$("fn").style.display=$("fp").style.display=m==="up"?"block":"none";$("at").textContent=m==="up"?"Create your account":"Welcome back";$("er").style.color="";$("er").textContent=""};
+window.openAuth=()=>{if(me){if(confirm("Sign out of "+(prof?prof.name:"your account")+"? Your cart stays saved.")){signOut(auth)}return}window.setMode("in");$("auth").classList.add("open")};
+window.forgot=async()=>{const e=$("fe").value.trim(),er=$("er");er.style.color="";if(!e)return er.textContent="Type your email above first.";try{await sendPasswordResetEmail(auth,e);er.style.color="#2e7d4f";er.textContent="Password reset email sent. Check your inbox."}catch(x){er.textContent=msg(x.code)}};
+window.submitAuth=async()=>{const email=$("fe").value.trim().toLowerCase(),pw=$("fw").value,er=$("er");er.style.color="";er.textContent="";
  if(!/^\S+@\S+\.\S+$/.test(email))return er.textContent="Enter a valid email address.";
  if(pw.length<6)return er.textContent="Password must be at least 6 characters.";
- const h=await hash(pw,email);
- if(mode==="up"){const name=$("fn").value.trim(),ph=$("fp").value.replace(/\D/g,"");
-  if(name.length<2)return er.textContent="Enter your full name.";
-  if(ph.length<10)return er.textContent="Enter a valid phone number.";
-  if(users[email])return er.textContent="This email is already registered. Please sign in.";
-  users[email]={name,phone:ph,hash:h,cart:[],addr:""}}
- else{if(!users[email]||users[email].hash!==h)return er.textContent="Incorrect email or password."}
- me=email;LS("nb_session",me);save();ui();closeAll();toast("Welcome, "+users[me].name.split(" ")[0]);
- if(pending!==null){const i=pending;pending=null;addCart(i)}}
-function addCart(i){if(!me){pending=i;setMode("in");$("auth").classList.add("open");toast("Please sign in to add items");return}
- const p=list[i],c=users[me].cart,f=c.find(x=>x.name===p.name);if(f)f.qty++;else c.push({name:p.name,price:p.price||0,qty:1});
- save();ui();toast("Added to cart")}
-function openCart(){if(!me){pending=null;setMode("in");$("auth").classList.add("open");return}drawCart();$("cart").classList.add("open")}
-function drawCart(){const u=users[me],c=u.cart;
+ try{
+  if(mode==="up"){const name=$("fn").value.trim(),ph=$("fp").value.replace(/\D/g,"");
+   if(name.length<2)return er.textContent="Enter your full name.";
+   if(ph.length<10)return er.textContent="Enter a valid phone number.";
+   busy=true;const c=await createUserWithEmailAndPassword(auth,email,pw);me=c.user;prof={name,phone:ph,email,cart:[],addr:""};
+   await setDoc(doc(db,"users",me.uid),prof);busy=false;ui();
+   if(pending!==null){const i=pending;pending=null;window.addCart(i)}
+  }else{await signInWithEmailAndPassword(auth,email,pw)}
+  window.closeAll();toast("Welcome")
+ }catch(e){busy=false;er.textContent=msg(e.code)}};
+window.addCart=i=>{if(!me||!prof){pending=i;window.setMode("in");$("auth").classList.add("open");toast("Please sign in to add items");return}
+ const p=list[i],id=p.id||p.name,c=prof.cart,f=c.find(x=>x.id===id);if(f)f.qty++;else c.push({id,name:p.name,price:p.price||0,qty:1});
+ saveProf();ui();toast("Added to cart")};
+window.openCart=()=>{if(!me||!prof){pending=null;window.setMode("in");$("auth").classList.add("open");return}drawCart();$("cart").classList.add("open")};
+function drawCart(){const c=prof.cart;
  $("ci").innerHTML=c.length?c.map((x,k)=>`<div class="ci"><div><b>${esc(x.name)}</b><br><small>${x.price?naira(x.price):"Price on request"}</small></div><div><button onclick="chg(${k},-1)">-</button> ${x.qty} <button onclick="chg(${k},1)">+</button></div></div>`).join(""):'<p style="color:var(--mute);margin-top:14px">Your cart is empty.</p>';
- $("tt").textContent=naira(total());$("addr").value=u.addr||"";$("paybtn").style.display=PAYSTACK_KEY?"block":"none"}
-function chg(k,d){const c=users[me].cart;c[k].qty+=d;if(c[k].qty<1)c.splice(k,1);save();drawCart();ui()}
-function clearCart(){if(confirm("Remove everything from your cart?")){users[me].cart=[];save();drawCart();ui()}}
-function need(){const u=users[me];if(!u.cart.length){alert("Your cart is empty.");return null}const a=$("addr").value.trim();if(!a){alert("Please enter your delivery address.");return null}u.addr=a;save();return a}
-function checkout(){const a=need();if(!a)return;const u=users[me];
- const lines=u.cart.map(c=>`- ${c.name} x${c.qty}${c.price?" ("+naira(c.price*c.qty)+")":""}`).join("\n");
- window.open(link(`Hello Nafsybabs Collections, I'd like to order:\n${lines}\nTotal: ${naira(total())}\n\nName: ${u.name}\nPhone: ${u.phone}\nEmail: ${me}\nDelivery address: ${a}`),"_blank")}
-function payCart(){const a=need();if(!a)return;const u=users[me],t=total();if(!t)return alert("Pay online needs priced items. Use WhatsApp checkout instead.");
+ $("tt").textContent=naira(total());$("addr").value=prof.addr||"";$("paybtn").style.display=PAYSTACK_KEY?"block":"none"}
+window.chg=(k,d)=>{const c=prof.cart;c[k].qty+=d;if(c[k].qty<1)c.splice(k,1);saveProf();drawCart();ui()};
+window.clearCart=()=>{if(confirm("Remove everything from your cart?")){prof.cart=[];saveProf();drawCart();ui()}};
+function need(){if(!prof.cart.length){alert("Your cart is empty.");return null}const a=$("addr").value.trim();if(!a){alert("Please enter your delivery address.");return null}prof.addr=a;saveProf();return a}
+const order=(via,ref)=>addDoc(collection(db,"orders"),{uid:me.uid,name:prof.name,phone:prof.phone,email:prof.email||me.email,address:prof.addr,items:prof.cart,total:total(),via,ref:ref||"",createdAt:serverTimestamp()}).catch(()=>{});
+window.checkout=()=>{const a=need();if(!a)return;
+ const lines=prof.cart.map(c=>`- ${c.name} x${c.qty}${c.price?" ("+naira(c.price*c.qty)+")":""}`).join("\n");
+ order("whatsapp");
+ window.open(link(`Hello Nafsybabs Collections, I'd like to order:\n${lines}\nTotal: ${naira(total())}\n\nName: ${prof.name}\nPhone: ${prof.phone}\nEmail: ${prof.email||me.email}\nDelivery address: ${a}`),"_blank")};
+window.payCart=()=>{const a=need();if(!a)return;const t=total();if(!t)return alert("Pay online needs priced items. Use WhatsApp checkout instead.");
  if(!window.PaystackPop)return alert("Payment is loading, please try again.");
- PaystackPop.setup({key:PAYSTACK_KEY,email:me,amount:t*100,currency:"NGN",metadata:{name:u.name,phone:u.phone,address:a},
-  callback:r=>{window.open(link(`Hello, I paid ${naira(t)} online. Ref: ${r.reference}\nName: ${u.name}\nPhone: ${u.phone}\nDelivery address: ${a}\nPlease confirm my delivery.`),"_blank");u.cart=[];save();drawCart();ui()},onClose:()=>{}}).openIframe()}
-setMode("in");ui();
+ PaystackPop.setup({key:PAYSTACK_KEY,email:prof.email||me.email,amount:t*100,currency:"NGN",metadata:{name:prof.name,phone:prof.phone,address:a},
+  callback:r=>{order("paystack",r.reference);window.open(link(`Hello, I paid ${naira(t)} online. Ref: ${r.reference}\nName: ${prof.name}\nPhone: ${prof.phone}\nDelivery address: ${a}\nPlease confirm my delivery.`),"_blank");prof.cart=[];saveProf();drawCart();ui()},onClose:()=>{}}).openIframe()};
+onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),s=>{list=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
+window.setMode("in");ui();
 </script>
 </body>
 </html>

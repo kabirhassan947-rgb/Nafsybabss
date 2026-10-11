@@ -1,23 +1,6 @@
-{
-  "settings": {
-    "whatsapp": "2347036440059",
-    "paystackKey": "",
-    "instagram": "https://www.instagram.com/zeeha_ng",
-    "tiktok": "https://www.tiktok.com/@zeeha_ng",
-    "email": "Zeehaofficial.ng@gmail.com",
-    "delivery": [
-      {
-        "name": "DELIVERY: Worldwide",
-        "fee": 0,
-        "eta": ""
-      },
-      {
-        "name": "TIME: Depend on location",
-        "fee": 0,
-        "eta": ""
-      }
-    ],
-    "phone": "2347036440059"
-  },
-  "products": []
-}
+[
+ {"name":"Embroidered Navy Abaya","price":35000,"category":"Abayas","desc":"Elegant gold-trim detailing","image":"","soldOut":false},
+ {"name":"Premium Lace Fabric","price":28000,"category":"Lace","desc":"Soft, rich and detailed","image":"","soldOut":false},
+ {"name":"Chiffon Veil Set","price":6500,"category":"Veils","desc":"Lightweight, many colours","image":"","soldOut":false},
+ {"name":"Ladies Handbag","price":18000,"category":"Bags","desc":"Stylish everyday carry","image":"","soldOut":false}
+]
