@@ -4,24 +4,25 @@
     "paystackKey": "",
     "instagram": "https://www.instagram.com/zeeha_ng",
     "tiktok": "https://www.tiktok.com/@zeeha_ng",
-    "email": "hello@zeeha.ng",
+    "email": "",
     "delivery": [
       {
         "name": "Abuja",
         "fee": 3000,
-        "eta": "1-2 working days"
+        "eta": "2 to 3 working days"
       },
       {
         "name": "Lagos",
         "fee": 4500,
-        "eta": "2-4 working days"
+        "eta": "2 to 3 working days"
       },
       {
         "name": "Other states in Nigeria",
         "fee": 6000,
-        "eta": "3-7 working days"
+        "eta": "2 to 3 working days"
       }
-    ]
+    ],
+    "phone": ""
   },
   "products": [
     {

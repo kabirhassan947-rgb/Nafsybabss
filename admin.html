@@ -43,7 +43,8 @@ function draw(){
  <div><label>Paystack public key (pk_live_...)</label><input data-s="paystackKey" value="${esc(s.paystackKey)}"></div>
  <div><label>Instagram link</label><input data-s="instagram" value="${esc(s.instagram)}"></div>
  <div><label>TikTok link</label><input data-s="tiktok" value="${esc(s.tiktok)}"></div>
- <div class="f"><label>Email</label><input data-s="email" value="${esc(s.email)}"></div>
+ <div><label>Phone number (shown on the site)</label><input data-s="phone" value="${esc(s.phone)}"></div>
+ <div><label>Email (shown on the site)</label><input data-s="email" value="${esc(s.email)}"></div>
  <div class="f"><label>Delivery options (one per line: Area | fee | time)</label><textarea rows="4" id="dv">${esc((s.delivery||[]).map(d=>`${d.name} | ${d.fee} | ${d.eta}`).join('\n'))}</textarea></div>`;
  $('#list').innerHTML=D.products.map((p,i)=>`<div class="p" data-i="${i}">
  <div><label>Name</label><input data-k="name" value="${esc(p.name)}"></div>

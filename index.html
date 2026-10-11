@@ -34,6 +34,7 @@ nav{display:flex;gap:26px;align-items:center}
 nav a{text-decoration:none;font-size:.92rem}
 nav a:hover{color:var(--wine)}
 .cartbtn{background:none;border:1px solid var(--wine);color:var(--wine);padding:7px 16px;cursor:pointer;font:500 .88rem Jost}
+.rt{display:flex;gap:12px;align-items:center}
 .menu{display:none;background:none;border:0;font-size:1.6rem;color:var(--wine);cursor:pointer}
 .hero{background:var(--blush);padding:0}
 .hero .wrap{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:30px;min-height:620px}
@@ -117,11 +118,10 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 <body>
 <header><div class="wrap nav">
  <a class="brand" href="#top">ZEEHA</a>
- <button class="menu" id="menu" aria-label="Menu">&#9776;</button>
  <nav id="nav">
   <a href="#shop">Shop</a><a href="#about">About</a><a href="#delivery">Delivery</a><a href="#contact">Contact</a>
-  <button class="cartbtn" id="cartOpen">Bag (<span id="cnt">0</span>)</button>
  </nav>
+ <div class="rt"><button class="cartbtn" id="cartOpen">Bag (<span id="cnt">0</span>)</button><button class="menu" id="menu" aria-label="Menu">&#9776;</button></div>
 </div></header>
 
 <main id="top">
@@ -135,8 +135,7 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 </div></section>
 
 <section id="shop"><div class="wrap">
- <h2>The collection</h2>
- <p class="sub">Ready to wear and ready to ship. Choose a piece to see colours, sizes and details.</p>
+ <h2 style="margin-bottom:24px">The collection</h2>
  <div class="filters" id="filters"></div>
  <div class="grid" id="grid"></div>
 </div></section>
@@ -159,9 +158,9 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 <section id="delivery"><div class="wrap two">
  <div>
   <h2>Delivery</h2>
-  <p class="sub">We deliver across Nigeria. Orders are packed within 1-2 working days after payment, and you will get a message when yours is on its way.</p>
+  <p class="sub">We deliver across Nigeria. Your order is packed after payment and delivered within the time below. We will message you when it is on its way.</p>
  </div>
- <div class="list" id="dlist"></div>
+ <div class="row"><div><b>2 to 3 working days</b><small>Delivery time after payment</small></div></div>
 </div></section>
 
 <section class="about contact" id="contact"><div class="wrap">
@@ -170,7 +169,7 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
  <a class="btn" id="cWa" target="_blank" rel="noopener">Chat on WhatsApp</a>
  <a class="btn ghost" id="cIg" target="_blank" rel="noopener">Instagram</a>
  <a class="btn ghost" id="cTt" target="_blank" rel="noopener">TikTok</a>
- <p style="margin-top:14px">Email: <a id="cMail"></a></p>
+ <p style="margin-top:14px" id="cinfo"></p>
 </div></section>
 </main>
 
@@ -202,9 +201,8 @@ function init(){
  $('#yr').textContent=new Date().getFullYear();
  ['#cWa','#waFloat'].forEach(s=>$(s).href=wa('Hello Zeeha, I have a question.'));
  $('#cIg').href=S.instagram;$('#cTt').href=S.tiktok;
- $('#cMail').href='mailto:'+S.email;$('#cMail').textContent=S.email;
- $('#dlist').innerHTML=S.delivery.map(d=>`<div class="row"><div><b>${esc(d.name)}</b><small>${esc(d.eta)}</small></div><div>${fmt(d.fee)}</div></div>`).join('');
- drawShop();save();
+ $('#cinfo').innerHTML=[S.phone?`Phone: <a href="tel:${esc(S.phone.replace(/\s/g,''))}">${esc(S.phone)}</a>`:'',S.email?`Email: <a href="mailto:${esc(S.email)}">${esc(S.email)}</a>`:''].filter(Boolean).join('<br>');
+  drawShop();save();
 }
 function drawShop(){
  const cats=['All',...new Set(P.map(p=>p.category))];
