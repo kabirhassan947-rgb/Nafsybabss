@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zeeha | Abayas &amp; Modest Wear</title>
-<meta name="description" content="Zeeha: elegant ready-to-wear abayas and modest wear, delivered across Nigeria.">
+<title>Zeeha | Modest Fashion</title>
+<meta name="description" content="Zeeha: elegant ready-to-wear modest fashion, delivered across Nigeria.">
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,6 +95,10 @@ label{display:block;font-size:.85rem;margin:12px 0 4px}
 input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;background:#fff;font:inherit;color:var(--ink)}
 .empty{text-align:center;padding:50px 0;opacity:.8}
 .note{font-size:.8rem;opacity:.75;margin-top:10px}
+.lnk{background:none;border:0;color:var(--wine);text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;margin-top:8px}
+.lb{position:fixed;inset:0;z-index:60;background:rgba(42,18,24,.85);display:none;place-items:center;padding:16px;cursor:zoom-out}
+.lb.open{display:grid}
+.lb img{max-height:94vh;max-width:100%;object-fit:contain}
 .msg{padding:50px 10px;text-align:center}
 @media(max-width:820px){
  section{padding:56px 0}
@@ -124,7 +128,7 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 <section class="hero"><div class="wrap">
  <div>
   <h1>Modest wear, made to feel luxurious.</h1>
-  <p>Zeeha designs ready-to-wear abayas and modest pieces with graceful cuts and soft fabrics, for every day and every celebration.</p>
+  <p>Zeeha designs elegant, comfortable ready-to-wear modest fashion with beautiful fabrics and refined details, for every day and every occasion.</p>
   <a class="btn" href="#shop">Shop the collection</a>
  </div>
  <img src="logo.png" alt="Zeeha logo">
@@ -139,14 +143,16 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 
 <section class="about" id="about"><div class="wrap two">
  <div>
-  <h2>About Zeeha</h2>
-  <p>Zeeha is a Nigerian modest fashion brand. We make abayas and ready-to-wear pieces that cover beautifully and feel easy to live in.</p>
-  <p style="margin-top:14px">Every piece is designed with clean lines, quality fabric and careful finishing, so you can dress with confidence at work, at home and at every occasion in between.</p>
+  <h2>About Us</h2>
+  <p>Zeeha is a Nigerian modest fashion brand founded in 2021 by Zainab Haaleem Hassan. The brand was born out of a passion for creating elegant, comfortable, and timeless ready-to-wear pieces for women who appreciate modesty and style.</p>
+  <p style="margin-top:14px">At Zeeha, we believe that fashion should be a balance of comfort, quality, and elegance. Our pieces are thoughtfully designed with beautiful fabrics, refined styles, and attention to detail, creating outfits that can be worn confidently on different occasions. We embrace simplicity and sophistication, with designs that reflect our commitment to making modest fashion effortlessly stylish.</p>
+  <p style="margin-top:14px">Zeeha represents a love for fashion that goes beyond trends, focusing on pieces that make women feel confident, comfortable, and beautiful. Our aim is to continue creating quality ready-to-wear collections that celebrate femininity and make timeless modest fashion a part of every woman&rsquo;s wardrobe.</p>
  </div>
  <div class="list">
-  <div class="row"><div><b>Abayas</b><small>Open, kimono and embroidered styles</small></div></div>
-  <div class="row"><div><b>Modest sets</b><small>Matching tops, skirts and maxi dresses</small></div></div>
-  <div class="row"><div><b>Accessories</b><small>Hijabs and finishing touches</small></div></div>
+  <div class="row"><div><b>Kimonos</b></div></div>
+  <div class="row"><div><b>Dresses</b></div></div>
+  <div class="row"><div><b>Scarves</b></div></div>
+  <div class="row"><div><b>Two piece sets</b></div></div>
  </div>
 </div></section>
 
@@ -168,9 +174,10 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d9aeb0;back
 </div></section>
 </main>
 
-<footer><div class="wrap"><span class="brand">ZEEHA</span>&copy; <span id="yr"></span> Zeeha. All rights reserved.</div></footer>
+<footer><div class="wrap"><span class="brand">ZEEHA</span><button class="lnk" id="fsg" style="color:var(--blush);display:block;margin:0 auto 8px">Size guide</button>&copy; <span id="yr"></span> Zeeha. All rights reserved.</div></footer>
 <a class="wa" id="waFloat" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">WhatsApp us</a>
 
+<div class="lb" id="lb" role="dialog" aria-label="Size guide"><img src="sizeguide.png" alt="Zeeha size chart"></div>
 <div class="ov" id="ov"></div>
 <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
 <aside class="drawer" id="drawer" aria-label="Shopping bag">
@@ -219,7 +226,7 @@ function drawProduct(){
  <div class="info"><h2>${esc(p.name)}</h2><div class="serif" style="font-size:1.6rem">${fmt(p.price)}</div>
  <p style="margin-top:10px">${esc(p.desc)}</p>
  <div class="opt">Colour: ${esc(sel.color)}</div><div class="chips" data-k="color">${p.colors.map(c=>`<button class="${c===sel.color?'on':''}">${esc(c)}</button>`).join('')}</div>
- <div class="opt">Size${sel.size?': '+esc(sel.size):''}</div><div class="chips" data-k="size">${p.sizes.map(c=>`<button class="${c===sel.size?'on':''}">${esc(c)}</button>`).join('')}</div>
+ <div class="opt">Size${sel.size?': '+esc(sel.size):''}</div><div class="chips" data-k="size">${p.sizes.map(c=>`<button class="${c===sel.size?'on':''}">${esc(c)}</button>`).join('')}</div><button class="lnk" id="sgb">Size guide</button>
  <div class="qty"><button data-q="-1" aria-label="Less">&minus;</button><span>${sel.q}</span><button data-q="1" aria-label="More">+</button>${!out&&p.stock<=5?`<small>Only ${p.stock} left</small>`:''}</div>
  <button class="btn" id="add" ${out?'disabled':''} style="width:100%">${out?'Sold out':'Add to bag'}</button>
  <p class="note" id="perr"></p></div>`;
@@ -227,6 +234,7 @@ function drawProduct(){
 $('#modal').onclick=e=>{
  const t=e.target;
  if(t.id==='mx')return closeAll();
+ if(t.id==='sgb')return $('#lb').classList.add('open');
  if(t.dataset.i){sel.img=+t.dataset.i;return drawProduct()}
  const ch=t.closest('.chips');
  if(ch&&t.tagName==='BUTTON'){sel[ch.dataset.k]=t.textContent;return drawProduct()}
@@ -238,9 +246,9 @@ $('#modal').onclick=e=>{
   save();closeAll();step='cart';drawCart();openCart();
  }
 };
-function closeAll(){['#modal','#drawer','#ov'].forEach(s=>$(s).classList.remove('open'))}
+function closeAll(){['#modal','#drawer','#ov','#lb'].forEach(s=>$(s).classList.remove('open'))}
 function openCart(){$('#drawer').classList.add('open');$('#ov').classList.add('open')}
-$('#ov').onclick=closeAll;$('#cartClose').onclick=closeAll;
+$('#ov').onclick=closeAll;$('#lb').onclick=()=>$('#lb').classList.remove('open');$('#fsg').onclick=()=>$('#lb').classList.add('open');$('#cartClose').onclick=closeAll;
 $('#cartOpen').onclick=()=>{step='cart';drawCart();openCart();$('#nav').classList.remove('open')};
 $('#menu').onclick=()=>$('#nav').classList.toggle('open');
 $('#nav').onclick=e=>{if(e.target.tagName==='A')$('#nav').classList.remove('open')};

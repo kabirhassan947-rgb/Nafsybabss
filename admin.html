@@ -47,7 +47,7 @@ function draw(){
  <div class="f"><label>Delivery options (one per line: Area | fee | time)</label><textarea rows="4" id="dv">${esc((s.delivery||[]).map(d=>`${d.name} | ${d.fee} | ${d.eta}`).join('\n'))}</textarea></div>`;
  $('#list').innerHTML=D.products.map((p,i)=>`<div class="p" data-i="${i}">
  <div><label>Name</label><input data-k="name" value="${esc(p.name)}"></div>
- <div><label>Collection / category</label><input data-k="category" value="${esc(p.category)}"></div>
+ <div><label>Collection / category (Kimonos, Dresses, Scarves, Two piece sets)</label><input data-k="category" value="${esc(p.category)}"></div>
  <div><label>Price (naira)</label><input data-k="price" type="number" value="${p.price}"></div>
  <div><label>Stock (0 = sold out)</label><input data-k="stock" type="number" value="${p.stock}"></div>
  <div><label>Colours (comma separated)</label><input data-k="colors" value="${esc(p.colors.join(', '))}"></div>
@@ -70,7 +70,7 @@ document.addEventListener('click',e=>{
  const t=e.target;
  if(t.dataset.del&&confirm('Delete this product?')){D.products.splice(+t.dataset.del,1);draw()}
 });
-$('#add').onclick=()=>{D.products.unshift({id:'p'+Date.now(),name:'New product',category:'Abayas',price:0,colors:['Black'],sizes:['S','M','L'],stock:1,images:[],desc:''});draw();scrollTo(0,0)};
+$('#add').onclick=()=>{D.products.unshift({id:'p'+Date.now(),name:'New product',category:'Kimonos',price:0,colors:['Black'],sizes:['S','M','L'],stock:1,images:[],desc:''});draw();scrollTo(0,0)};
 $('#dl').onclick=()=>{
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));a.download='products.json';a.click();
 };
