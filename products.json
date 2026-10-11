@@ -1,27 +1,11 @@
 {
   "settings": {
-    "whatsapp": "2340000000000",
+    "whatsapp": "2347036440059",
     "paystackKey": "",
     "instagram": "https://www.instagram.com/zeeha_ng",
     "tiktok": "https://www.tiktok.com/@zeeha_ng",
-    "email": "hello@zeeha.ng",
-    "delivery": [
-      {
-        "name": "Abuja",
-        "fee": 3000,
-        "eta": "1-2 working days"
-      },
-      {
-        "name": "Lagos",
-        "fee": 4500,
-        "eta": "2-4 working days"
-      },
-      {
-        "name": "Other states in Nigeria",
-        "fee": 6000,
-        "eta": "3-7 working days"
-      }
-    ]
+    "email": "Zeehaofficial.ng@gmail.com",
+    "delivery": []
   },
   "products": []
 }
