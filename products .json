@@ -1,0 +1,23 @@
+{
+  "settings": {
+    "whatsapp": "2347036440059",
+    "paystackKey": "",
+    "instagram": "https://www.instagram.com/zeeha_ng",
+    "tiktok": "https://www.tiktok.com/@zeeha_ng",
+    "email": "Zeehaofficial.ng@gmail.com",
+    "delivery": [
+      {
+        "name": "DELIVERY: Worldwide",
+        "fee": 0,
+        "eta": ""
+      },
+      {
+        "name": "TIME: Depends on Location",
+        "fee": 0,
+        "eta": ""
+      }
+    ],
+    "phone": "2347036440059"
+  },
+  "products": []
+}
