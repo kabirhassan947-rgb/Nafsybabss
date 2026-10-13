@@ -1,4 +1,4 @@
-# Zeeha website
+# Nafsybabs website
 
 Abayas and modest wear store. Plain HTML, CSS and JavaScript, so it hosts free on GitHub Pages.
 
