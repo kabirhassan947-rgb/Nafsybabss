@@ -139,12 +139,19 @@ footer a{color:var(--gold2)}
 .tot{display:flex;justify-content:space-between;font:500 1.2rem 'Playfair Display',serif;margin:18px 0}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--gold2);padding:12px 22px;font-size:.8rem;z-index:60;opacity:0;transition:.4s;pointer-events:none}
 .toast.on{opacity:1}
+.fbar{text-align:center;margin:-20px 0 30px;font-size:.9rem}.fbar:empty{display:none}
+.fbar button{margin-left:14px;border:1px solid var(--ink);background:none;padding:6px 16px;cursor:pointer;font:400 .68rem Poppins,sans-serif;letter-spacing:.15em;text-transform:uppercase}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;max-width:900px;margin:44px auto 0;text-align:left}
+.vals div{border-top:1px solid rgba(201,162,75,.4);padding-top:16px}
+.vals h3{color:var(--gold2);font-size:1.15rem}
+.vals p{font-size:.85rem;color:#b9aac8;margin:4px 0 0;max-width:none}
+.acct{text-transform:uppercase}
 </style>
 </head>
 <body>
 <nav>
  <a class="brand" href="#"><span class="logo"></span>Nafsybabs</a>
- <div class="links"><a href="#shop">Collections</a><a href="#products">Products</a><a href="#delivery">Delivery</a><a href="#pay">Payment</a><a class="keep" id="acctbtn" href="#" onclick="openAuth();return false">Sign in</a><a class="keep" href="#" onclick="openCart();return false">Cart (<span id="cc">0</span>)</a><a class="cta" id="navwa" href="#">WhatsApp</a></div>
+ <div class="links"><a href="#shop">Collections</a><a href="#about">About</a><a href="#products">Products</a><a href="#delivery">Delivery</a><a href="#pay">Payment</a><a class="keep" id="acctbtn" href="#" onclick="openAuth();return false">Sign in</a><a class="keep" href="#" onclick="openCart();return false">Cart (<span id="cc">0</span>)</a><a class="cta" id="navwa" href="#">WhatsApp</a></div>
 </nav>
 
 <header class="hero" id="hero">
@@ -165,15 +172,18 @@ footer a{color:var(--gold2)}
  <div class="list" id="cats"></div>
 </section>
 
-<section class="about">
- <span class="eyebrow">Our Promise</span>
- <h2>Style, tradition &amp; <span class="gold">quality</span></h2>
- <p>From Ankara and Atamfa to lace, veils and jalabiyya, Nafsybabs Collections brings fashion and household needs together, serving customers in Suleja, Keffi, Abuja and across the nation.</p>
+<section class="about" id="about">
+ <span class="eyebrow">About Us</span>
+ <h2>Your trusted store for style &amp; <span class="gold">everyday essentials</span></h2>
+ <p>Nafsybabs Collections is a Nigerian store serving Suleja, Keffi and Abuja, with delivery across the country. We deal in a wide range of quality products: Ankara and Atamfa, lace, veils, shoes, bags, materials, abayas, jalabiyya, incense, kitchen utensils and much more.</p>
+ <p style="margin-top:16px">We believe good style and daily necessities should be easy to find in one place, at fair prices. Every item is carefully selected, every order is packed with care, and every customer is treated like family.</p>
+ <div class="vals"><div><h3>Quality you can trust</h3><p>Carefully selected fabrics, fashion and household items.</p></div><div><h3>Wide variety</h3><p>From wedding fabrics to kitchen essentials, all under one roof.</p></div><div><h3>Delivery nationwide</h3><p>We ship to all 36 states and the FCT, Abuja.</p></div></div>
  <div class="stats"><div><b data-n="10">0</b>Collections</div><div><b data-n="37">0</b>States served</div><div><b data-n="100">0</b>Quality focus %</div></div>
 </section>
 
 <section id="products">
  <div class="head"><span class="eyebrow">New Arrivals</span><h2>Our Products</h2><p>Order through WhatsApp, or pay online where available.</p></div>
+ <div id="fbar" class="fbar"></div>
  <div class="grid" id="prods"></div>
 </section>
 
@@ -193,7 +203,7 @@ footer a{color:var(--gold2)}
  <div class="head"><span class="eyebrow">Checkout</span><h2>Payment options</h2><p>Simple, secure and flexible.</p></div>
  <div class="grid">
   <div class="pc rv"><h3>Pay online</h3><p>Card, bank transfer or USSD through Paystack.</p><span class="badge" id="pbadge">Coming soon</span></div>
-  <div class="pc rv"><h3>Bank transfer</h3><p>Transfer to our account, then send proof on WhatsApp.</p><div class="acct" id="acct"></div></div>
+  <div class="pc rv"><h3>Bank transfer</h3><p>Transfer to our account, then send proof on WhatsApp.</p><div id="acct"></div></div>
   <div class="pc rv"><h3>Confirm on WhatsApp</h3><p>Send your payment proof and order details and we dispatch promptly.</p><a class="btn" style="margin-top:18px;color:var(--ink);border-color:var(--ink)" id="paywa" href="#">Send proof</a></div>
  </div>
 </section>
@@ -228,7 +238,7 @@ footer a{color:var(--gold2)}
 // ===== EDIT HERE =====
 const WA = "2348169891410";
 const PAYSTACK_KEY = "";            // paste your Paystack PUBLIC key (pk_live_...) to switch on online payment
-const BANK = {bank:"", number:"", name:""}; // fill in your bank details
+const BANKS = [{bank:"ECOBANK",number:"4220004283",name:"NAFISAT MUHAMMAD BABA"},{bank:"KEYSTONE BANK",number:"1013390885",name:"MUHAMMAD NAFISAT BABA"}]; // your bank accounts
 const categories=["Ankara / Atamfa","Lace","Veils","Shoes","Bags","Materials","Abayas","Jalabiyya","Incense","Kitchen Utensils","And Lots More"];
 // =====================
 const $=id=>document.getElementById(id);
@@ -240,17 +250,23 @@ const logo=()=>{ln++;return `<svg class="lg" viewBox="0 0 120 120" role="img" ar
 document.querySelectorAll(".logo").forEach(e=>e.innerHTML=logo());
 ["navwa","herowa","cwa","fwa","paywa"].forEach(i=>{const e=$(i);e.href=link("Hello Nafsybabs Collections, I'd like to place an order.");e.target="_blank";e.rel="noopener"});
 $("paywa").href=link("Hello, I've made payment for my order. Here is my proof of payment.");
-$("cats").innerHTML=categories.map((c,i)=>`<a class="row rv" target="_blank" rel="noopener" href="${link("Hello, I'm interested in your "+c+".")}"><i>${String(i+1).padStart(2,"0")}</i><h3>${c}</h3><small>Enquire →</small></a>`).join("");
+$("cats").innerHTML=categories.map((c,i)=>`<a class="row rv" href="#products" onclick="pickCat(${i})"><i>${String(i+1).padStart(2,"0")}</i><h3>${c}</h3><small>View items →</small></a>`).join("");
 const m=categories.map(c=>c.toUpperCase()).join("   ◆   ")+"   ◆   DELIVERY NATIONWIDE   ◆   ";
 $("mq").textContent=m+m+m+m;
 $("yr").textContent=new Date().getFullYear();
 let list=[];
+let cat="";
+const shownList=()=>list.map((p,i)=>({p,i})).filter(x=>!cat||x.p.category===cat);
+const emptyMsg=()=>cat?`<div class="empty">No ${esc(cat)} items listed yet. <a href="${link("Hello, do you have any "+cat+" available?")}" target="_blank" rel="noopener" style="color:#8a6a1f">Ask us on WhatsApp</a>.</div>`:'<div class="empty">New arrivals coming soon. Message us on WhatsApp to see what is in stock.</div>';
+function setCat(c){cat=c;render()}
+function pickCat(i){setCat(i===categories.length-1?"":categories[i])}
 function render(){
- $("prods").innerHTML=list.length?list.map((p,i)=>`<div class="prod rv"><span class="chip">${esc(p.category||"New")}</span>${p.soldOut?'<span class="chip sold">Sold out</span>':""}<div class="pimg" style="${p.image?`background-image:url('${esc(p.image)}')`:""}">${p.image?"":"N"}</div><div class="pb"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>${p.price?`<div class="price">${naira(p.price)}</div>`:""}<div class="pa">${p.soldOut?'<a href="#" style="pointer-events:none;opacity:.5">Sold out</a>':`<button onclick="addCart(${i})">Add to cart</button>`}</div></div></div>`).join(""):'<div class="empty">New arrivals coming soon. Message us on WhatsApp to see what is in stock.</div>';
+ $("fbar").innerHTML=cat?`<span>Showing <b>${esc(cat)}</b></span><button onclick="setCat('')">Show all</button>`:"";
+ $("prods").innerHTML=shownList().length?shownList().map(({p,i})=>`<div class="prod rv"><span class="chip">${esc(p.category||"New")}</span>${p.soldOut?'<span class="chip sold">Sold out</span>':""}<div class="pimg" style="${p.image?`background-image:url('${esc(p.image)}')`:""}">${p.image?"":"N"}</div><div class="pb"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>${p.price?`<div class="price">${naira(p.price)}</div>`:""}<div class="pa">${p.soldOut?'<a href="#" style="pointer-events:none;opacity:.5">Sold out</a>':`<button onclick="addCart(${i})">Add to cart</button>`}</div></div></div>`).join(""):emptyMsg();
  observe()}
 fetch("products.json?"+Date.now()).then(r=>r.json()).then(d=>{list=Array.isArray(d)?d:[];render()}).catch(()=>{list=[];render()});
 if(PAYSTACK_KEY){$("pbadge").textContent="Available";$("pbadge").className="badge on"}
-$("acct").innerHTML=BANK.number?`${esc(BANK.bank)}<b>${esc(BANK.number)}</b>${esc(BANK.name)}<br><button class="copy" onclick="navigator.clipboard.writeText('${esc(BANK.number)}');this.textContent='Copied'">Copy number</button>`:"Bank details will appear here.";
+$("acct").innerHTML=BANKS.length?BANKS.map(b=>`<div class="acct">${esc(b.bank)}<b>${esc(b.number)}</b>${esc(b.name)}<br><button class="copy" onclick="navigator.clipboard.writeText('${esc(b.number)}');this.textContent='Copied'">Copy number</button></div>`).join(""):"Bank details will appear here.";
 const hero=$("hero");
 for(let i=0;i<14;i++){const s=document.createElement("span");s.className="dust";s.style.cssText=`left:${Math.random()*100}%;animation-duration:${14+Math.random()*14}s;animation-delay:${-Math.random()*20}s`;hero.appendChild(s)}
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target)}}),{threshold:.12});
